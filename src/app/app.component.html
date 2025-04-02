@@ -1,0 +1,100 @@
+<soho-icons-new></soho-icons-new>
+<soho-icons-empty-new></soho-icons-empty-new>
+<div class="full-width">
+
+   <div class="title" style="width: 95%;">
+      <span style="float: right;">version 0.0.7</span>
+
+   </div>
+
+
+
+   <div soho-tabs #tabtraitement [disableAutoUpdatedCall]="true" registerForEvents="activated">
+
+      <div soho-tab-list-container>
+         <ul soho-tab-list>
+            <li soho-tab name="Stock" selected="true"><a soho-tab-title tabId="tabs-Stock">Stock</a>
+            </li>
+            <li soho-tab name="echance"><a soho-tab-title tabId="tabs-echeance">Stock echéancé</a></li>
+         </ul>
+      </div>
+   </div>
+
+   <div soho-tab-panel-container #tabtraitementcontainer style="height: calc(100vh - 80.8px); margin: 0;">
+      <div soho-tab-panel tabId="tabs-Stock" style="height : 100%; padding: 0;">
+         <div id="firstPart">
+            <div class="row" style="margin-top: 8px;margin-left: 10px; max-width: none;">
+               <div class="three columns">
+                  <div class="field">
+                     <label for="Code article">Article</label>
+                     <input class="app-inputsearch" soho-searchfield [options]="searchfieldOptionsItem"
+                        [clearable]="true" style="width: auto; height:auto;" (keydown)="onKeydown($event)"
+                        placeholder="*abc" [(ngModel)]="ITNO" (selected)="onSelectedITNO($event)"
+                        (cleared)="onClear($event)" />
+                  </div>
+               </div>
+
+               <div class="one columns">
+                  <div class="field">
+                     <label for="Statut">Statut</label>
+                     <input [(ngModel)]="STAT" maxlength="15" size="15" style="width: auto; height:38px;" />
+                  </div>
+               </div>
+               <div class="one columns">
+                  <label for="Statut">Dépôt</label>
+                  <select style="width: 10.25em; " soho-dropdown noSearch name="WHLO" [(ngModel)]="selectWHLO">
+                     <option value=""> </option> <!-- Option vide -->
+                     <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}}</option>
+                  </select>
+               </div>
+               <div class="one columns">
+                  <label for="Groupe dépôt">Groupe Dépôt</label>
+                  <select style="width: 10.25em; " soho-dropdown noSearch name="WHGR" [(ngModel)]="selectWHGR">
+                     <option value=""> </option> <!-- Option vide -->
+                     <option *ngFor="let whgr of ListWHGR" [value]="whgr.MNWHGR">{{whgr.MNWHGR}}</option>
+                  </select>
+               </div>
+               <div class="one columns">
+                  <label for="Groupe dépôt">Emplacement</label>
+                  <select style="width: 10.25em; " soho-dropdown noSearch name="WHSL" [(ngModel)]="selectWHSL">
+                     <option value=""> </option> <!-- Option vide -->
+                     <option *ngFor="let whsl of ListWHSL" [value]="whsl.WHSL">{{whsl.SLDS}}</option>
+                  </select>
+               </div>
+               <div class="one columns">
+                  <label for="Groupe dépôt">Vente</label>
+                  <select style="width: 10.25em; " soho-dropdown noSearch name="SALE" [(ngModel)]="SALE">
+                     <option value="1">1</option>
+                     <option value="0">0</option>
+                  </select>
+               </div>
+               <div class="one columns">
+                  <div class="field">
+                     <label for="Emplacement"></label>
+                     <button soho-button="primary" icon="search" style="width: auto; height:38px;"
+                        (click)="rechercher()">Rechercher</button>
+                  </div>
+               </div>
+            </div>
+            <!-- <div class="gridStock" soho-busyindicator [activated]="isBusy" [blockUI]="true" [displayDelay]="0">-->
+            <div soho-busyindicator [activated]="this.isBusy" [blockUI]="true" [displayDelay]="0"
+               #basicdatagridListearticle class="gridStock" soho-datagrid [gridOptions]="optionsDataGridListearticle"
+               (selected)="onevent($event.rows,'sendDataClick')">
+               <!-- <app-basicgrid class="gridStock" #basicdatagridListearticle soho-busyindicator [program]="'CMS100MI'"
+                  [transaction]="'LstMSH_MT_1'" [optionsDataGrid]="optionsDataGridListearticle" [initialise]="false"
+                  (sendDataClick)="onevent($event,'sendDataClick')">
+               </app-basicgrid>-->
+            </div>
+            <div id="expander" (click)="expand()">▼</div>
+            <div id="secondPart">
+               <cmp-multidepot #cmpmultidepot [ITNOSelected]="ITNOSelected"></cmp-multidepot>
+
+            </div>
+         </div>
+      </div>
+      <div soho-tab-panel-container #tabtraitementcontainer style="height: 0px;">
+         <div soho-tab-panel tabId="tabs-echeance">
+            <cmp-stockEcheance #cmpstockEcheance [USERWHLO]="USERWHLO"></cmp-stockEcheance>
+         </div>
+      </div>
+   </div>

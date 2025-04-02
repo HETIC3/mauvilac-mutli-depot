@@ -1,0 +1,7 @@
+<div soho-busyindicator [blockUI]="true" [displayDelay]="0">
+  <label *ngIf="required===true" for="states" class="label" class="required">{{namebox}}</label>
+  <label *ngIf="required===false" for="states" class="label">{{namebox}}</label>
+  <select soho-dropdown id="states" name="namebox"  placeholder="Selection Valeur" [(ngModel)]="initialvalue"  [style.background]="onstylebackground()" (cuechange)="onChange($event)" (change)="onChange($event)" >
+    <option  *ngFor="let option of options" [value]="option.value" >{{option.text}}</option> 
+  </select>
+</div>

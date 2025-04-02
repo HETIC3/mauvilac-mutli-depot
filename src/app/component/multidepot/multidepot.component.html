@@ -1,0 +1,11 @@
+<div class="full-width full-height scrollable-flex"
+   style="margin: 0px; padding: 10px 0px 0px 0px; max-height:600px ;max-width:1600px">
+   <div soho-busyindicator [blockUI]="true" [displayDelay]="0">
+      article : {{ITNOSelected}}
+   </div>
+   <div soho-busyindicator [activated]="isBusy" [blockUI]="true" [displayDelay]="0">
+      <app-basicgrid #basicdatagridListearticleMultiDepot [program]="'CMS100MI'" [transaction]="'LstMSH_MT_2'"
+         [optionsDataGrid]="optionsDataGridListearticleMultiDepot" [initialise]="false">
+      </app-basicgrid>
+   </div>
+</div>

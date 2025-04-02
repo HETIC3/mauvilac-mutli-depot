@@ -1,0 +1,9 @@
+<div soho-busyindicator [activated]="this.isBusy" [blockUI]="true" [displayDelay]="0">
+   <div #BasicDatagrid soho-datagrid [gridOptions]="optionsDataGrid" [treeGrid]="treeGrid"
+      (selected)="onSelected($event.rows)" (click)="onclick($event)" (filtered)="onFiltered($event)"
+      (rowClicked)="onRowclick($event)" (rowDoubleClicked)="ondoubleclick($event)"
+      (settingsChanged)="onsettingsChanged($event)" (afterRender)="onafterrender($event)" (keydown)="onKeyDown($event)"
+      (beforeentereditmode)="onBeforeEnterEditMode($event)" (entereditmode)="onEnterEditMode($event)"
+      (exiteditmode)="onExitEditMode($event)">
+   </div>
+</div>

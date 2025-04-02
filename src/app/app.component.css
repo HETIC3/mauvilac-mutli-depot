@@ -1,0 +1,43 @@
+.full-width {
+   height: 100vh;
+   padding: 0;
+}
+
+#firstPart {
+   height: calc(65% - 80px);
+}
+
+#secondPart {
+   height: calc(35% - 10px);
+   display: block;
+}
+
+#firstPart.expanded {
+   height: calc(100% - 80px);
+}
+
+#secondPart.expanded {
+   display: none;
+}
+
+#expander {
+   width: 100%;
+   background-color: rgb(231, 231, 231);
+   height: 10px;
+   margin-top: 5px;
+   margin-bottom: 5px;
+   text-align: center;
+   font-size: 10px;
+   cursor: pointer;
+}
+
+
+.gridStock {
+   height: calc(100% - 60px);
+}
+
+#version {
+   position: absolute;
+   left: 20px;
+   bottom: 5px;
+}

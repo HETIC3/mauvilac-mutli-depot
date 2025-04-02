@@ -1,0 +1,103 @@
+<div class="row" style="margin-top: 0px;margin-left: 10px; max-width: none;">
+   <div class="one columns">
+      <div class="field">
+         <label for="DateFrom">Date début</label>
+         <input [(ngModel)]="FDAT" placeholder="AAAAMM" maxlength="6" size="6" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="DateTo">Date fin</label>
+         <input [(ngModel)]="TDAT" placeholder="AAAAMM" maxlength="6" size="6" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="Emplacement"></label>
+         <button soho-button="primary" icon="search" style="width: auto; height:38px;"
+            (click)="loadTotaux()">Calculer</button>
+      </div>
+   </div>
+</div>
+<div class="row" style="margin-top: 10px;margin-left: 30px;margin-bottom: 5px; max-width: none;">
+   <h1>Somme</h1>
+</div>
+<div class="row" style="margin-top: 0px;margin-left: 10px; max-width: none;">
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeEntree">Entrée</label>
+         <input [(ngModel)]="sumENTR" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeRecep">Reception</label>
+         <input [(ngModel)]="sumRECE" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeSortie">Sortie</label>
+         <input [(ngModel)]="sumQOUT" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeConso">Conso</label>
+         <input [(ngModel)]="sumCONS" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeRegul">Régul</label>
+         <input [(ngModel)]="sumREGU" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeRegul">Commande</label>
+         <input [(ngModel)]="sumCMDE" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="SommeRegul">DA/DF</label>
+         <input [(ngModel)]="sumDADF" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+</div>
+<div class="row" style="margin-top: 10px;margin-left: 30px;margin-bottom: 5px; max-width: none;">
+   <h1>Moyenne</h1>
+</div>
+<div class="row" style="margin-top: 0px;margin-left: 10px; max-width: none;">
+   <div class="one columns">
+      <div class="field">
+         <label for="MoyenneEntree">Entrée</label>
+         <input [(ngModel)]="avgENTR" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="MoyenneRecep">Reception</label>
+         <input [(ngModel)]="avgRECE" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="MoyenneSortie">Sortie</label>
+         <input [(ngModel)]="avgQOUT" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="MoyenneConso">Conso</label>
+         <input [(ngModel)]="avgCONS" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+   <div class="one columns">
+      <div class="field">
+         <label for="MoyenneRegul">Régul</label>
+         <input [(ngModel)]="avgREGU" readonly size="15" style="width: auto; height:38px;" />
+      </div>
+   </div>
+</div>

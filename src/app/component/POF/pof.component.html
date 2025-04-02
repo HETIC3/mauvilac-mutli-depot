@@ -1,0 +1,39 @@
+<div class="full-width full-height scrollable-flex"
+   style="margin: 0px; padding: 10px 0px 0px 0px; max-height:600px ;max-width:1600px">
+   <div soho-busyindicator [blockUI]="true" [displayDelay]="0">
+      article : {{ITNOSelected}} -- Dépôt : {{WHLOSelected}}
+   </div>
+
+   <div soho-busyindicator [activated]="isBusy" [blockUI]="true" [displayDelay]="0">
+      <div class="six columns">
+         <app-basicgrid #basicdatagridListePOF [program]="'PPS170MI'" [transaction]="'LstPOProp'"
+            [optionsDataGrid]="optionsDataGridListePof" [initialise]="false">
+         </app-basicgrid>
+      </div>
+      <div class="three columns">
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <span style="margin-bottom: 3px; width: 7em;">Dépôt</span>
+            <input [(ngModel)]="WHLOSelected" maxlength="15" size="15" style="width: auto; height:auto;" readonly />
+         </div>
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <span style="margin-bottom: 3px; width: 7em;">Code article</span>
+            <input [(ngModel)]="ITNOSelected" maxlength="15" size="15" style="width: auto; height:auto;" readonly />
+         </div>
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <span style="margin-bottom: 3px; width: 7em;">Date de planification</span>
+            <input [(ngModel)]="PLDT" maxlength="15" size="15" style="width: auto; height:auto;"
+               placeholder="AAAAMMJJ" />
+         </div>
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <span style="margin-bottom: 3px; width: 7em;">Quantité planifiée</span>
+            <input [(ngModel)]="PPQT" maxlength="15" size="15" style="width: auto; height:auto;" />
+         </div>
+
+         <br />
+         <div class="row" style="margin-bottom: 5px;">
+            <button soho-button="primary" icon="save" (click)="createPOF()"
+               [disabled]="disabledBTenrgistrer">Créer</button>
+         </div>
+      </div>
+   </div>
+</div>
