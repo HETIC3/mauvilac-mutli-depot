@@ -274,7 +274,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
             next: (response) => {
                this.datasetZoom = response.items
                this.ArrayDataZoom.push(this.datasetZoom);
-               console.log(this.datasetZoom);
+               //console.log(this.datasetZoom);
                if (response.items.length == 0) {
                   // Crée un nouvel objet MIRecord
                   const newRecord = new MIRecord();
@@ -321,6 +321,20 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       this.dataset.sort((a, b) => {
          return parseInt(a.AnneeMois) - parseInt(b.AnneeMois);
       });
+      console.log("Apres tri");
+      let newStock = 0;
+      for (let i = 0; i < this.dataset.length; i++) {
+         if (i !== 0) {
+            this.dataset[i].STO1 = newStock.toFixed(2);
+         }
+
+         if (Number(this.dataset[i].ENTR) == 0 && Number(this.dataset[i].QOUT) == 0 && Number(this.dataset[i].REGU) == 0) {
+
+         } else {
+            newStock = Number(this.dataset[i].ENTR) + Number(this.dataset[i].QOUT) + Number(this.dataset[i].REGU) || 0;
+         }
+      }
+
 
       this.basicdatagridListeStockEcheance.datagrid.dataset = this.dataset
    }
