@@ -12,7 +12,7 @@ import { ArticleRow } from './interface/fournisseur-row';
 import { multidepotComponent } from './component/multidepot/multidepot.component';
 import { poaComponent } from './component/POA/poa.component';
 import { pofComponent } from './component/POF/pof.component';
-
+//0.0.8
 
 
 @Component({
