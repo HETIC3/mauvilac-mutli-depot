@@ -12,6 +12,7 @@ import { ArticleRow } from './interface/fournisseur-row';
 import { multidepotComponent } from './component/multidepot/multidepot.component';
 import { poaComponent } from './component/POA/poa.component';
 import { pofComponent } from './component/POF/pof.component';
+import { stockEcheanceComponent } from './stockEcheance/stockEcheance.component';
 //0.0.8
 
 
@@ -26,6 +27,7 @@ export class AppComponent extends CoreBase implements OnInit {
    @ViewChild(SohoBusyIndicatorDirective, { static: true }) busyIndicator?: SohoBusyIndicatorDirective;
    @ViewChild('basicdatagridListearticle') basicdatagridListearticle: SohoDataGridComponent;
    @ViewChild('cmpmultidepot') cmpmultidepot: multidepotComponent;
+   @ViewChild('cmpstockEcheance') cmpstockEcheance: stockEcheanceComponent;
    @ViewChild('cmppoa') cmppoa: poaComponent;
    @ViewChild('cmppof') cmppof: pofComponent;
 
@@ -200,6 +202,7 @@ export class AppComponent extends CoreBase implements OnInit {
 
    rechercher() {
       (this.busyIndicator as any).activated = true;
+      //this.cmpstockEcheance.loadStock(6);
       let inputFields: any;
       let outputFields: any[] = [];
       let newrecord = {
@@ -400,7 +403,7 @@ export class AppComponent extends CoreBase implements OnInit {
       let reponse: any[];
 
       let newrecord = {
-         SQRY: "SearchFields:ITNO;ITDS;FUDS " + term + "*",
+         SQRY: "SearchFields:ITNO;ITDS;FUDS " + term + "* NOT ITTY:7FA",
          //SQRY: "SearchFields:ITNO;FUDS;ITDS: BLANC*"
       };
       inputFields = newrecord;

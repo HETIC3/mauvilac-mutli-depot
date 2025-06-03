@@ -30,6 +30,7 @@ export class totauxComponent extends CoreBase implements OnInit {
    sumCONS: number;
    sumREGU: number;
    sumCMDE: number;
+   sumRESE: number;
    sumDADF: number;
 
    //Zone des moyennes
@@ -78,6 +79,8 @@ export class totauxComponent extends CoreBase implements OnInit {
             this.sumCONS = reponse[0].CONS;
             this.sumREGU = reponse[0].REGU;
             this.sumCMDE = reponse[0].CMDE;
+            this.sumCMDE = reponse[0].CMDE;
+            this.sumRESE = reponse[0].RESE;
             this.sumDADF = reponse[0].DADF;
             this.avgENTR = reponse[0].MENT;
             this.avgRECE = reponse[0].MREC;

@@ -37,7 +37,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    public closeResult = '(N/A)';
    public title = 'Zoom sur la donnée';
 
-   @Input() ITNOSelected: string;
+   @Input() ITNOSelected: string = '';
    @Input() USERWHLO: string;
    userContext = {} as IUserContext;
    dataselect: Object[] = [];
@@ -45,7 +45,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    isBusy = false;
    USID: string = '';
    //Filtre article (deux onglets)
-   ITNO_2: string = '';
+   @Input() ITNO_2: string = '';
    busyItem = true;
    SearchItem: any[];
 
@@ -67,6 +67,10 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    ListWHSL: any[] = [];
    selectWHSL: string;
 
+   //Filtre période
+   FDAT: number;
+   TDAT: number;
+
    //Valeur pour remplir la datagrid
    dataset: any[] = [];
    datasetZoom: any[] = [];
@@ -86,6 +90,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       { id: 'CONS', field: 'CONS', name: 'Consommation', width: 30, sortable: false, filterType: 'text' },
       { id: 'REGU', field: 'REGU', name: 'Régul', width: 30, sortable: false, filterType: 'text' },
       { id: 'CMDE', field: 'CMDE', name: 'Commande', width: 30, sortable: false, filterType: 'text' },
+      { id: 'RESE', field: 'RESE', name: 'Reservée', width: 30, sortable: false, filterType: 'text' },
       { id: 'DADF', field: 'DADF', name: 'DA/DF', width: 30, sortable: false, filterType: 'text' },
 
       { id: 'PERI', field: 'PERI', name: 'PERI', hidden: true, width: 30, sortable: false, filterType: 'text' },
@@ -108,6 +113,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       idProperty: 'ID',
       paging: true,
       pagesize: 15,
+      showPageSizeSelector: false,
       indeterminate: false,
       columns: this.columnsListeStockEcheance,
       dataset: [],
@@ -200,6 +206,8 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    }
       */
+
+   /*SAV avant changementFiltre date
    loadStock(numPeriods: number) {
       this.numPeriods = 12;
       if (this.ITNO_2 == '') {
@@ -239,15 +247,82 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       this.cmppoa.getSUNO();
 
       //this.loadMMS080();
+   }*/
+
+   loadStock() {
+
+      if (this.ITNO_2 == '') {
+         alert("Le champ article  doit être renseigné");
+         return;
+      }
+
+      (this.busyIndicator as any).activated = true;
+      this.basicdatagridListeStockEcheance.datagrid.dataset = [];
+      this.ArrayDataZoom = [];
+      this.dataset = [];
+
+      const startYear = Math.floor(this.FDAT / 100);
+      const startMonth = this.FDAT % 100;
+
+      const endYear = Math.floor(this.TDAT / 100);
+      const endMonth = this.TDAT % 100;
+
+      let currentYear = startYear;
+      let currentMonth = startMonth;
+
+      let year = startYear;
+      let month = startMonth;
+
+      // Créer un objet dynamique pour le forkJoin
+      let requests = {};
+      let i = 0;
+
+      while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
+         console.log("LECTURE DE BOUCLE currentYear ==> " + currentYear + " EndYear ==> " + endYear + " CurrentMonth => " + currentMonth + " EndMOnth ===> " + endMonth)
+         // Calcul du décalage en mois par rapport à currentDate
+         const monthOffset = (year - currentYear) * 12 + (month - currentMonth);
+
+         requests[i] = this.loadMITTRAFirstMonth(monthOffset + 1);
+
+         // Avance d’un mois
+         if (currentMonth === 12) {
+            currentMonth = 1;
+            currentYear++;
+         } else {
+            currentMonth++;
+         }
+         i++;
+      }
+
+      forkJoin(requests).subscribe({
+         next: (response) => { // a enlever quand IES OK
+            this.fillDatagrid();
+            // console.log("Zoom");
+            //console.log(this.ArrayDataZoom);
+            //this.onRefreshDetail.emit('ok');
+         }, error: (error) => {
+            (this.busyIndicator as any).activated = false;
+            this.logError('Failed to load items :' + JSON.stringify(error));
+            alert('Error ' + JSON.stringify(error));
+         }, complete: () => {
+            // this.onRefreshDetail.emit('Maj faite');
+            (this.busyIndicator as any).activated = false;
+         }
+      });
+
+      this.cmppoa.getSUNO();
+
+      //this.loadMMS080();
    }
 
-   loadMoreStock() {
+   /*loadMoreStock() {
       console.log("Nombre de periode " + this.numPeriods);
       this.loadStock(this.numPeriods + 6);
       this.numPeriods = this.numPeriods + 6;
-   }
+   }*/
 
 
+   /* SAV avant changement filtre date
    loadMITTRAFirstMonth(period: number): Observable<any> {
       let start = { value: "" };
       let end = { value: "" };
@@ -255,6 +330,69 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let yearMonth = { value: "" };
 
       this.setStartAndEndWithOffset(period - 3, start, end, month, yearMonth);
+
+      //(this.busyIndicator as any).activated = true;
+      let inputFields: any;
+      let outputFields: any[] = [];
+      let newrecord = {
+         WHLO: this.selectWHLO_2,
+         ITNO: this.ITNO_2,
+         WHSL: this.selectWHSL,
+         FDAT: start.value,
+         TDAT: end.value,
+      };
+      inputFields = newrecord;
+      let subscription: Subscription;
+
+      return new Observable((observer) => {
+         this.APIService.GetFieldValue('STOCKECHMI', 'LstMITTRA', outputFields, inputFields, 100).subscribe({
+            next: (response) => {
+               this.datasetZoom = response.items
+               this.ArrayDataZoom.push(this.datasetZoom);
+               //console.log(this.datasetZoom);
+               if (response.items.length == 0) {
+                  // Crée un nouvel objet MIRecord
+                  const newRecord = new MIRecord();
+                  newRecord.setString('Periode', month.value);
+                  newRecord.setString('AnneeMois', yearMonth.value);
+                  newRecord.setString('ITNO', this.ITNO_2);
+                  // Ajoute le `newRecord` dans `items`
+                  response.items.push(newRecord);
+                  this.dataset.push(response.items[0]);
+               } else {
+                  for (let i = 0; i < response.items.length; i++) {
+                     if (response.items[i].ITNO != 'Total') {
+                        continue;
+                     }
+                     response.items[i].Periode = month.value;
+                     response.items[i].AnneeMois = yearMonth.value;
+                     this.dataset.push(response.items[i]);
+
+                  }
+               }
+               // this.dataset[index] = response.items
+               observer.next(this.firstMonthRecepQty);
+            },
+            error: (error) => {
+               //  (this.busyIndicator as any).activated = false;
+               this.logError('Failed to load items: ' + JSON.stringify(error));
+               observer.error(error);
+            },
+            complete: () => {
+               //  (this.busyIndicator as any).activated = false;
+               observer.complete();
+            }
+         });
+      });
+   }*/
+
+   loadMITTRAFirstMonth(monthOffset: number): Observable<any> {
+      let start = { value: "" };
+      let end = { value: "" };
+      let month = { value: "" };
+      let yearMonth = { value: "" };
+
+      this.setStartAndEndWithOffset(monthOffset, start, end, month, yearMonth);
 
       //(this.busyIndicator as any).activated = true;
       let inputFields: any;
@@ -318,10 +456,13 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    fillDatagrid() {
       //on tri par ordre croissant sur AnnéeMois
+      console.log("Avant tri")
+      console.log(this.dataset);
       this.dataset.sort((a, b) => {
          return parseInt(a.AnneeMois) - parseInt(b.AnneeMois);
       });
       console.log("Apres tri");
+      console.log(this.dataset);
       let newStock = 0;
       for (let i = 0; i < this.dataset.length; i++) {
          if (i !== 0) {
@@ -364,7 +505,8 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          '5': 'CONS',
          '6': 'REGU',
          '7': 'CMDE',
-         '8': 'DADF',
+         '8': 'RESE',
+         '9': 'DADF',
       };
 
       const columnNameMapping = {
@@ -374,7 +516,8 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          '5': 'Quantité consomée',
          '6': 'Quantité régul',
          '7': 'Quantité commandée',
-         '8': 'Quantité planifiée'
+         '8': 'Quantité Reservée',
+         '9': 'Quantité planifiée'
       };
       if (e.column !== '0' && columnMapping[e.column]) {
          field = columnMapping[e.column];
@@ -502,6 +645,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    // obtenir les dates de début et de fin d'un mois avec un décalage
    setStartAndEndWithOffset(monthOffset: number, start: { value: string }, end: { value: string }, monthName: { value: string }, yearMonth: { value: string }) {
+      console.log("Choix des dates");
       const currentDate = new Date();
 
       // Appliquer le décalage de mois
@@ -549,7 +693,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let reponse: any[];
 
       let newrecord = {
-         SQRY: "SearchFields:ITNO;ITDS;FUDS " + term + "*",
+         SQRY: "SearchFields:ITNO;ITDS;FUDS " + term + "* NOT ITTY:7FA",
          //SQRY: "SearchFields:ITNO;FUDS;ITDS: BLANC*"
       };
       inputFields = newrecord;

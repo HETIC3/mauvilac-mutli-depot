@@ -1,0 +1,24 @@
+input,
+textarea {
+   -webkit-transition: border 300ms ease 0s, box-shadow 300ms ease 0s;
+   -moz-transition: border 300ms ease 0s, box-shadow 300ms ease 0s;
+   -o-transition: border 300ms ease 0s, box-shadow 300ms ease 0s;
+   -ms-transition: border 300ms ease 0s, box-shadow 300ms ease 0s;
+   transition: border 300ms ease 0s, box-shadow 300ms ease 0s;
+   -moz-osx-font-smoothing: grayscale;
+   -webkit-font-smoothing: antialiased;
+   -webkit-appearance: none;
+   background-color: #ffffff;
+   border: 1px solid #97979B;
+   border-collapse: separate;
+   border-radius: 2px;
+   color: #000000;
+   display: inline-block;
+   font-size: 1.6rem;
+   height: 3.8rem;
+   max-width: 100%;
+   padding: 0 10px;
+   resize: none;
+   text-align: left;
+   width: 600px;
+}

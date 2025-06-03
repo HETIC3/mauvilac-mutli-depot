@@ -3,7 +3,7 @@
 <div class="full-width">
 
    <div class="title" style="width: 95%;">
-      <span style="float: right;">version 0.0.8</span>
+      <span style="float: right;">version 0.0.11</span>
 
    </div>
 
@@ -94,7 +94,8 @@
       </div>
       <div soho-tab-panel-container #tabtraitementcontainer style="height: 0px;">
          <div soho-tab-panel tabId="tabs-echeance">
-            <cmp-stockEcheance #cmpstockEcheance [USERWHLO]="USERWHLO"></cmp-stockEcheance>
+            <cmp-stockEcheance #cmpstockEcheance [USERWHLO]="USERWHLO" [ITNO_2]="ITNOSelected"
+               [ITNO_2]="ITNO"></cmp-stockEcheance>
          </div>
       </div>
    </div>

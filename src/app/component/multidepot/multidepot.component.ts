@@ -23,15 +23,15 @@ export class multidepotComponent extends CoreBase implements OnInit {
 
    columnsListearticleMultiDepot = [
       { id: 'ID', field: 'ID', name: '', hidden: true, sortable: false, formatter: Soho.Formatters.SelectionCheckbox },
-      { id: 'MLITNO', field: 'MLITNO', name: 'Code article', width: 80, sortable: false, filterType: 'text' },
-      { id: 'MMITDS', field: 'MMITDS', name: 'Nom ', width: 100, sortable: false, filterType: 'text' },
-      { id: 'MMSTAT', field: 'MMSTAT', name: 'Stt', width: 40 },
-      { id: 'MMSALE', field: 'MMSALE', name: 'Vente', width: 40 },
-      { id: 'MLWHLO', field: 'MLWHLO', name: 'Dépôt', width: 50, sortable: false },
-      { id: 'MLWHSL', field: 'MLWHSL', name: 'Emplacement', width: 50, sortable: false },
-      { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 50, sortable: false },
-      { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 50, sortable: false },
-      { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 50, sortable: false },
+      { id: 'MLITNO', field: 'MLITNO', name: 'Code article', width: 30, sortable: false, filterType: 'text' },
+      { id: 'MMITDS', field: 'MMITDS', name: 'Nom ', width: 70, sortable: false, filterType: 'text' },
+      { id: 'MMSTAT', field: 'MMSTAT', name: 'Stt', width: 10 },
+      { id: 'MMSALE', field: 'MMSALE', name: 'Vente', width: 20 },
+      { id: 'MLWHLO', field: 'MLWHLO', name: 'Dépôt', width: 40, sortable: false },
+      { id: 'MLWHSL', field: 'MLWHSL', name: 'Emplacement', width: 40, sortable: false },
+      { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
+      { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 40, sortable: false },
+      { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 80, sortable: false },
 
 
    ];
