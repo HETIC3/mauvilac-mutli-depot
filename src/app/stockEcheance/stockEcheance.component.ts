@@ -89,7 +89,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       { id: 'QOUT', field: 'QOUT', name: 'Sortie', width: 30, sortable: false, filterType: 'text' },
       { id: 'CONS', field: 'CONS', name: 'Consommation', width: 30, sortable: false, filterType: 'text' },
       { id: 'REGU', field: 'REGU', name: 'Régul', width: 30, sortable: false, filterType: 'text' },
-      { id: 'CMDE', field: 'CMDE', name: 'Commande', width: 30, sortable: false, filterType: 'text' },
+      { id: 'CMDE', field: 'CMDE', name: 'Commande OA/OF', width: 30, sortable: false, filterType: 'text' },
       { id: 'RESE', field: 'RESE', name: 'Reservée', width: 30, sortable: false, filterType: 'text' },
       { id: 'DADF', field: 'DADF', name: 'DA/DF', width: 30, sortable: false, filterType: 'text' },
 
@@ -265,10 +265,10 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       const startMonth = this.FDAT % 100;
 
       const endYear = Math.floor(this.TDAT / 100);
-      const endMonth = this.TDAT % 100;
+      const endMonth = this.TDAT % 100 - 1;
 
       let currentYear = startYear;
-      let currentMonth = startMonth;
+      let currentMonth = startMonth - 1;
 
       let year = startYear;
       let month = startMonth;
@@ -282,11 +282,11 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          // Calcul du décalage en mois par rapport à currentDate
          const monthOffset = (year - currentYear) * 12 + (month - currentMonth);
 
-         requests[i] = this.loadMITTRAFirstMonth(monthOffset + 1);
+         requests[i] = this.loadMITTRAFirstMonth(currentMonth, currentYear);
 
          // Avance d’un mois
-         if (currentMonth === 12) {
-            currentMonth = 1;
+         if (currentMonth === 11) {
+            currentMonth = 0;
             currentYear++;
          } else {
             currentMonth++;
@@ -386,13 +386,13 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       });
    }*/
 
-   loadMITTRAFirstMonth(monthOffset: number): Observable<any> {
+   loadMITTRAFirstMonth(monthOffset: number, date: number): Observable<any> {
       let start = { value: "" };
       let end = { value: "" };
       let month = { value: "" };
       let yearMonth = { value: "" };
 
-      this.setStartAndEndWithOffset(monthOffset, start, end, month, yearMonth);
+      this.setStartAndEndWithOffset(monthOffset, date, start, end, month, yearMonth);
 
       //(this.busyIndicator as any).activated = true;
       let inputFields: any;
@@ -644,12 +644,15 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    }
 
    // obtenir les dates de début et de fin d'un mois avec un décalage
-   setStartAndEndWithOffset(monthOffset: number, start: { value: string }, end: { value: string }, monthName: { value: string }, yearMonth: { value: string }) {
+   setStartAndEndWithOffset(monthOffset: number, date: number, start: { value: string }, end: { value: string }, monthName: { value: string }, yearMonth: { value: string }) {
       console.log("Choix des dates");
       const currentDate = new Date();
 
       // Appliquer le décalage de mois
-      currentDate.setMonth(currentDate.getMonth() + monthOffset);
+      currentDate.setFullYear(date)
+      currentDate.setMonth(monthOffset);
+      console.log(currentDate.getMonth());
+      console.log(currentDate.getFullYear());
 
       // Premier jour du mois après le décalage
       const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);

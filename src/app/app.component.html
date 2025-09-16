@@ -3,7 +3,7 @@
 <div class="full-width">
 
    <div class="title" style="width: 95%;">
-      <span style="float: right;">version 0.0.11</span>
+      <span style="float: right;">version 0.0.13</span>
 
    </div>
 
@@ -24,7 +24,7 @@
       <div soho-tab-panel tabId="tabs-Stock" style="height : 100%; padding: 0;">
          <div id="firstPart">
             <div class="row" style="margin-top: 8px;margin-left: 10px; max-width: none;">
-               <div class="three columns">
+               <div class="four columns">
                   <div class="field">
                      <label for="Code article">Article</label>
                      <input class="app-inputsearch" soho-searchfield [options]="searchfieldOptionsItem"
@@ -37,14 +37,19 @@
                <div class="one columns">
                   <div class="field">
                      <label for="Statut">Statut</label>
-                     <input [(ngModel)]="STAT" maxlength="15" size="15" style="width: auto; height:38px;" />
+                     <!--<input [(ngModel)]="STAT" maxlength="15" size="15" style="width: auto; height:38px;" />-->
+                     <select style="width: 10.25em; " soho-dropdown noSearch name="STAT" [(ngModel)]="STAT">
+                        <option value="10">10 - Préliminaire</option>
+                        <option value="20">20 - Actifs</option>
+                        <option value="90">20 - Désactivé</option>
+                     </select>
                   </div>
                </div>
                <div class="one columns">
                   <label for="Statut">Dépôt</label>
                   <select style="width: 10.25em; " soho-dropdown noSearch name="WHLO" [(ngModel)]="selectWHLO">
                      <option value=""> </option> <!-- Option vide -->
-                     <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}}</option>
+                     <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
                   </select>
                </div>
                <div class="one columns">
@@ -64,8 +69,9 @@
                <div class="one columns">
                   <label for="Groupe dépôt">Vente</label>
                   <select style="width: 10.25em; " soho-dropdown noSearch name="SALE" [(ngModel)]="SALE">
-                     <option value="1">1</option>
-                     <option value="0">0</option>
+                     <option value="1">1 - Vendable</option>
+                     <option value="0">0 - Non Vendable</option>
+                     <option value="">Tout</option>
                   </select>
                </div>
                <div class="one columns">

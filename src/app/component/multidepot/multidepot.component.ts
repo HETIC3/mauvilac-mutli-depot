@@ -31,7 +31,8 @@ export class multidepotComponent extends CoreBase implements OnInit {
       { id: 'MLWHSL', field: 'MLWHSL', name: 'Emplacement', width: 40, sortable: false },
       { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
       { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 40, sortable: false },
-      { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 80, sortable: false },
+      { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 40, sortable: false },
+      { id: 'MTRIDN', field: 'MTRIDN', name: 'Ordre Référence', width: 40, sortable: false },
 
 
    ];

@@ -7,7 +7,15 @@
 /bazel-out
 
 # Node
-/node_modules
+/node_modules/*
+!/node_modules/ids-enterprise/
+/node_modules/ids-enterprise/*
+!/node_modules/ids-enterprise/dist/
+/node_modules/ids-enterprise/dist/*
+!/node_modules/ids-enterprise/dist/js/
+/node_modules/ids-enterprise/dist/js/*
+!/node_modules/ids-enterprise/dist/js/sohoxi.js
+!/node_modules/ids-enterprise/dist/js/sohoxi.min.js
 npm-debug.log
 yarn-error.log
 

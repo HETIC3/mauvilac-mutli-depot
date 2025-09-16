@@ -17,6 +17,7 @@ import { MMS80component } from './component/MMS080/MMS080.component';
 import { totauxComponent } from './component/Totaux/totaux.component';
 import { ModalDialogOneColumnComponent } from './basic/modal-dialog/ModalDialogOneColumn.component';
 import { ModalDialogAllColumnComponent } from './basic/modal-dialog/ModalDialogAllColumn.component';
+import { podComponent } from './component/POD/pod.component';
 
 @NgModule({
    declarations: [
@@ -26,6 +27,7 @@ import { ModalDialogAllColumnComponent } from './basic/modal-dialog/ModalDialogA
       multidepotComponent,
       poaComponent,
       pofComponent,
+      podComponent,
       stockEcheanceComponent,
       MMS80component,
       ModalDialogOneColumnComponent,

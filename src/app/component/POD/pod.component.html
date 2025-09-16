@@ -1,0 +1,89 @@
+<div class="full-width full-height scrollable-flex"
+   style="margin: 0px; padding: 10px 0px 0px 0px; max-height:600px ;max-width:1600px">
+   <div soho-busyindicator [blockUI]="true" [displayDelay]="0">
+      article : {{ITNOSelected}} -- Dépôt : {{WHLOSelected}}
+   </div>
+
+   <div soho-busyindicator [activated]="isBusy" [blockUI]="true" [displayDelay]="0">
+      <div class="six columns">
+         <app-basicgrid #basicdatagridListePOD [program]="'CMS100MI'" [transaction]="'LstMSH_MT_6'"
+            [optionsDataGrid]="optionsDataGridListePod" [initialise]="false">
+         </app-basicgrid>
+      </div>
+      <div class="three columns">
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <label for="TWHL">Dépôt destination</label>
+            </div>
+            <div class="six columns">
+               <select style="width: 10.25em; " soho-dropdown noSearch name="TWHL" [(ngModel)]="TWHL">
+                  <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
+               </select>
+            </div>
+         </div>
+
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <label for="FWHL">Dépôt départ </label>
+            </div>
+            <div class="six columns">
+               <select style="width: 10.25em;  " soho-dropdown noSearch name="FWHL" [(ngModel)]="FWHL">
+                  <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
+               </select>
+            </div>
+         </div>
+
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <span style="margin-bottom: 3px; width: 7em;">Code article</span>
+            </div>
+            <div class="six columns">
+               <input [(ngModel)]="ITNOSelected" maxlength="15" size="15" style="width: auto; height:auto;" readonly />
+            </div>
+         </div>
+
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <label for="FWHL">Type d'ordre </label>
+            </div>
+
+            <div class="six columns">
+               <select style="width: 10.25em;  " soho-dropdown noSearch name="ORTY" [(ngModel)]="ORTY">
+                  <option *ngFor="let orty of ListORTY" [value]="orty.TRTP">{{orty.TRTP}} - {{orty.TX40}}</option>
+               </select>
+            </div>
+         </div>
+
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <span style="margin-bottom: 3px; width: 7em;">Date de planification</span>
+            </div>
+            <div class="six columns">
+               <input [(ngModel)]="DLDT" maxlength="15" size="15" style="width: auto; height:auto;"
+                  placeholder="JJMMAA" />
+            </div>
+         </div>
+         <div class="row" style="margin-bottom: 5px; display: flex;">
+            <div class="six columns">
+               <span style="margin-bottom: 3px; width: 7em;">Quantité planifiée</span>
+            </div>
+            <div class="six columns">
+               <input [(ngModel)]="PPQT" maxlength="15" size="15" style="width: auto; height:auto;" />
+            </div>
+         </div>
+
+         <br />
+         <div class="row" style="margin-bottom: 5px;">
+            <div class="six columns">
+               <button soho-button="primary" icon="save" (click)="createPOD()"
+                  [disabled]="disabledBTenrgistrer">Créer</button>
+            </div>
+            <div class="six columns">
+               <button soho-button="primary" icon="search" (click)="UpdatePOD()"
+                  [disabled]="disabledBTenrgistrer">Traiter
+                  POD</button>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

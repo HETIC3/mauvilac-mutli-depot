@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CoreBase } from '@infor-up/m3-odin';
 import { SohoBusyIndicatorDirective } from 'ids-enterprise-ng';
+import { ApplicationService } from '@infor-up/m3-odin-angular';
 import { Subscription } from 'rxjs';
 import { BasicGridComponent } from 'src/app/basic/grid/basicgrid.component';
 import { BasicAPIService } from 'src/app/services/basicAPI.service';
@@ -65,7 +66,7 @@ export class poaComponent extends CoreBase implements OnInit {
 
 
 
-   constructor(private APIService: BasicAPIService) {
+   constructor(private APIService: BasicAPIService, private applicationService: ApplicationService) {
       super('poa');
    }
 
@@ -131,6 +132,15 @@ export class poaComponent extends CoreBase implements OnInit {
             (this.busyIndicator as any).activated = false;
          }
       });
+   }
+
+   UpdatePOA() {
+      if (this.ITNOSelected !== '') {
+         let query: string = 'mforms://_automation?data=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%3csequence%3e%3cstep+command%3d%22RUN%22+value%3d%22PPS170%22+%2f%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22WWQTTP%22%3e70%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22W1OBKV%22%3e'
+            + this.ITNOSelected +
+            '%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22KEY%22+value%3d%22ENTER%22+%2f%3e%3c%2fsequence%3e';
+         this.applicationService.launch(query);
+      }
    }
 
    getListPOA(PLPN: string) {
