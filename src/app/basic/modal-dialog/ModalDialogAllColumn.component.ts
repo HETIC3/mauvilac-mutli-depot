@@ -16,6 +16,7 @@ export class ModalDialogAllColumnComponent implements OnInit {
    field: string = "";
    columnsListeZoom = [
       { id: 'Periode', field: 'Periode', name: 'Période', width: 40, sortable: false },
+      { id: 'TRDT', field: 'TRDT', name: 'Date Transaction', width: 40, sortable: false },
       { id: 'STO1', field: 'STO1', name: 'Stock début', width: 30, sortable: false, filterType: 'text' },
       { id: 'ENTR', field: 'ENTR', name: 'Entrée', width: 30, sortable: false, filterType: 'text' },
       { id: 'RECE', field: 'RECE', name: 'Receptionée', width: 30, sortable: false, filterType: 'text' },

@@ -39,13 +39,17 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    @Input() ITNOSelected: string = '';
    @Input() USERWHLO: string;
+
+
    userContext = {} as IUserContext;
    dataselect: Object[] = [];
    lineSelected: any = '';
    isBusy = false;
    USID: string = '';
+
    //Filtre article (deux onglets)
    @Input() ITNO_2: string = '';
+   @Input() ITDS: string;
    busyItem = true;
    SearchItem: any[];
 
@@ -68,8 +72,10 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    selectWHSL: string;
 
    //Filtre période
-   FDAT: number;
-   TDAT: number;
+   FDAT: string;
+   FDAT_API: number;
+   TDAT: string;
+   TDAT_API: number;
 
    //Valeur pour remplir la datagrid
    dataset: any[] = [];
@@ -146,6 +152,22 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          this.logError('Unable to get userContext ' + error);
       });
       this.getListWHSL();
+
+
+      const currentDate = new Date();
+      currentDate.setMonth(currentDate.getMonth() - 6);
+      const month = currentDate.getMonth() + 1; // Les mois vont de 0 à 11
+      const year = currentDate.getFullYear();
+      // Format MMAAAA (avec le mois sur 2 chiffres)
+      this.FDAT = `${month.toString().padStart(2, '0')}${year}`;
+
+      const currentDate_2 = new Date();
+      currentDate_2.setMonth(currentDate_2.getMonth() + 6);
+      const month_2 = currentDate_2.getMonth() + 1; // Les mois vont de 0 à 11
+      const year_2 = currentDate_2.getFullYear();
+      // Format MMAAAA (avec le mois sur 2 chiffres)
+      this.TDAT = `${month_2.toString().padStart(2, '0')}${year_2}`;
+
 
    }
 
@@ -256,16 +278,20 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          return;
       }
 
+      this.FDAT_API = this.convertirDateVersDateApi(this.FDAT);
+
+      this.TDAT_API = this.convertirDateVersDateApi(this.TDAT);
+
       (this.busyIndicator as any).activated = true;
       this.basicdatagridListeStockEcheance.datagrid.dataset = [];
       this.ArrayDataZoom = [];
       this.dataset = [];
 
-      const startYear = Math.floor(this.FDAT / 100);
-      const startMonth = this.FDAT % 100;
+      const startYear = Math.floor(this.FDAT_API / 100);
+      const startMonth = this.FDAT_API % 100;
 
-      const endYear = Math.floor(this.TDAT / 100);
-      const endMonth = this.TDAT % 100 - 1;
+      const endYear = Math.floor(this.TDAT_API / 100);
+      const endMonth = this.TDAT_API % 100 - 1;
 
       let currentYear = startYear;
       let currentMonth = startMonth - 1;
@@ -278,7 +304,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let i = 0;
 
       while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
-         console.log("LECTURE DE BOUCLE currentYear ==> " + currentYear + " EndYear ==> " + endYear + " CurrentMonth => " + currentMonth + " EndMOnth ===> " + endMonth)
+         //console.log("LECTURE DE BOUCLE currentYear ==> " + currentYear + " EndYear ==> " + endYear + " CurrentMonth => " + currentMonth + " EndMOnth ===> " + endMonth)
          // Calcul du décalage en mois par rapport à currentDate
          const monthOffset = (year - currentYear) * 12 + (month - currentMonth);
 
@@ -310,7 +336,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          }
       });
 
-      this.cmppoa.getSUNO();
+      //odin this.cmppoa.getSUNO();
 
       //this.loadMMS080();
    }
@@ -410,9 +436,19 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       return new Observable((observer) => {
          this.APIService.GetFieldValue('STOCKECHMI', 'LstMITTRA', outputFields, inputFields, 100).subscribe({
             next: (response) => {
+               //On garde la réponse avec tout le détail pour l'affichage du zoom
                this.datasetZoom = response.items
+               for (let i = 0; i < response.items.length; i++) {
+                  let trdt = response.items[i].TRDT;
+                  let annee = trdt.substring(0, 4);
+                  let mois = trdt.substring(4, 6);
+                  let jour = trdt.substring(6, 8);
+
+                  response.items[i].TRDT = `${jour}${mois}${annee}`;
+
+               }
                this.ArrayDataZoom.push(this.datasetZoom);
-               //console.log(this.datasetZoom);
+
                if (response.items.length == 0) {
                   // Crée un nouvel objet MIRecord
                   const newRecord = new MIRecord();
@@ -456,15 +492,15 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    fillDatagrid() {
       //on tri par ordre croissant sur AnnéeMois
-      console.log("Avant tri")
-      console.log(this.dataset);
       this.dataset.sort((a, b) => {
          return parseInt(a.AnneeMois) - parseInt(b.AnneeMois);
       });
-      console.log("Apres tri");
-      console.log(this.dataset);
+      //console.log("Apres tri");
+      //console.log(this.dataset);
       let newStock = 0;
       for (let i = 0; i < this.dataset.length; i++) {
+         this.dataset[i].NEWDATE = "TEST";
+
          if (i !== 0) {
             this.dataset[i].STO1 = newStock.toFixed(2);
          }
@@ -472,7 +508,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          if (Number(this.dataset[i].ENTR) == 0 && Number(this.dataset[i].QOUT) == 0 && Number(this.dataset[i].REGU) == 0) {
 
          } else {
-            newStock = Number(this.dataset[i].ENTR) + Number(this.dataset[i].QOUT) + Number(this.dataset[i].REGU) || 0;
+            newStock += Number(this.dataset[i].ENTR) + Number(this.dataset[i].QOUT) + Number(this.dataset[i].REGU) || 0;
          }
       }
 
@@ -496,6 +532,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let datasetToPass = [];
       let showModal = false;
       let periodeZoom = e.item.AnneeMois;
+
       const index = this.ArrayDataZoom.findIndex(row => row[0].PERI === periodeZoom);
       datasetToPass = this.ArrayDataZoom[index];
       const columnMapping = {
@@ -645,14 +682,14 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    // obtenir les dates de début et de fin d'un mois avec un décalage
    setStartAndEndWithOffset(monthOffset: number, date: number, start: { value: string }, end: { value: string }, monthName: { value: string }, yearMonth: { value: string }) {
-      console.log("Choix des dates");
+      //console.log("Choix des dates");
       const currentDate = new Date();
 
       // Appliquer le décalage de mois
       currentDate.setFullYear(date)
       currentDate.setMonth(monthOffset);
-      console.log(currentDate.getMonth());
-      console.log(currentDate.getFullYear());
+      //console.log(currentDate.getMonth());
+      //console.log(currentDate.getFullYear());
 
       // Premier jour du mois après le décalage
       const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -685,6 +722,20 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       monthName.value = `${monthsInFrench[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
       yearMonth.value = `${currentDate.getFullYear()}${month.toString().padStart(2, '0')}`;
 
+   }
+
+   convertirDateVersDateApi(date: string): number {
+      const Str = date.toString().padStart(6, '0'); // Ajoute un 0 au début si nécessaire
+
+      if (Str.length !== 6) {
+         throw new Error("Le format de la date doit être AAAAMM (6 chiffres)");
+      }
+
+      const annee = Str.substring(2, 6);
+      const mois = Str.substring(0, 2);
+
+      const dateAPI = `${annee}${mois}`;
+      return parseInt(dateAPI, 10);
    }
 
    public source = (term: string, response: any) => {
@@ -723,6 +774,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    onSelectedITNO(event): void {
       if (event[2].value === '') return
       this.ITNO_2 = event[2].value;
+      this.ITDS = event[2].label;
    }
 
    onClear(event: any): void {

@@ -45,8 +45,8 @@ export class podComponent extends CoreBase implements OnInit {
       { id: 'DOITNO', field: 'DOITNO', name: 'Code article', width: 20, sortable: false, filterType: 'text' },
       { id: 'DOTWHL', field: 'DOTWHL', name: 'Dépôt destination', width: 20, sortable: false, filterType: 'text' },
       { id: 'DOFWHL', field: 'DOFWHL', name: 'Dépôt départ', width: 20 },
-      { id: 'DLDT', field: 'DLDT', name: 'Date planif', width: 20 },
-      { id: 'PPQT', field: 'PPQT', name: 'Qte planif', width: 10 },
+      { id: 'DODLDT', field: 'DODLDT', name: 'Date planif', width: 20 },
+      { id: 'DOPPQT', field: 'DOPPQT', name: 'Qte planif', width: 10 },
 
    ];
 

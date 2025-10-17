@@ -3,7 +3,7 @@
 <div class="full-width">
 
    <div class="title" style="width: 95%;">
-      <span style="float: right;">version 0.0.13</span>
+      <span style="float: right;">version 1.0.0</span>
 
    </div>
 
@@ -26,7 +26,7 @@
             <div class="row" style="margin-top: 8px;margin-left: 10px; max-width: none;">
                <div class="four columns">
                   <div class="field">
-                     <label for="Code article">Article</label>
+                     <label for="Code article">Article : {{ITDS}}</label>
                      <input class="app-inputsearch" soho-searchfield [options]="searchfieldOptionsItem"
                         [clearable]="true" style="width: auto; height:auto;" (keydown)="onKeydown($event)"
                         placeholder="*abc" [(ngModel)]="ITNO" (selected)="onSelectedITNO($event)"
@@ -41,14 +41,14 @@
                      <select style="width: 10.25em; " soho-dropdown noSearch name="STAT" [(ngModel)]="STAT">
                         <option value="10">10 - Préliminaire</option>
                         <option value="20">20 - Actifs</option>
-                        <option value="90">20 - Désactivé</option>
+                        <option value="90">90 - Désactivé</option>
                      </select>
                   </div>
                </div>
                <div class="one columns">
                   <label for="Statut">Dépôt</label>
                   <select style="width: 10.25em; " soho-dropdown noSearch name="WHLO" [(ngModel)]="selectWHLO">
-                     <option value=""> </option> <!-- Option vide -->
+                     <option value="">Tout dépôts </option> <!-- Option vide -->
                      <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
                   </select>
                </div>
@@ -100,8 +100,8 @@
       </div>
       <div soho-tab-panel-container #tabtraitementcontainer style="height: 0px;">
          <div soho-tab-panel tabId="tabs-echeance">
-            <cmp-stockEcheance #cmpstockEcheance [USERWHLO]="USERWHLO" [ITNO_2]="ITNOSelected"
-               [ITNO_2]="ITNO"></cmp-stockEcheance>
+            <cmp-stockEcheance #cmpstockEcheance [USERWHLO]="USERWHLO" [ITNO_2]="ITNOSelected" [ITNO_2]="ITNO"
+               [ITDS]="ITDS"></cmp-stockEcheance>
          </div>
       </div>
    </div>

@@ -19,9 +19,13 @@ export class totauxComponent extends CoreBase implements OnInit {
    @Input() selectWHLO_2;
    @Input() ITNO_2;
    @Input() selectWHSL;
+
+
    //Filtre période
    FDAT: string;
+   FDAT_API: string;
    TDAT: string;
+   TDAT_API: string;
 
    //Zone des totaux
    sumENTR: number;
@@ -47,13 +51,28 @@ export class totauxComponent extends CoreBase implements OnInit {
    }
 
    ngOnInit(): void {
-      this.logWarning('chargement Panel multiDépôt');
-      this.FDAT = this.getStartPeriod();
-      this.TDAT = this.getEndPeriod();
-      //this.getListWHLO();
+      this.logWarning('chargement Panel Totaux');
+      const currentDate = new Date();
+      currentDate.setMonth(currentDate.getMonth() - 6);
+      const month = currentDate.getMonth() + 1; // Les mois vont de 0 à 11
+      const year = currentDate.getFullYear();
+      // Format MMAAAA (avec le mois sur 2 chiffres)
+      this.FDAT = `${month.toString().padStart(2, '0')}${year}`;
+
+      const currentDate_2 = new Date();
+      currentDate_2.setMonth(currentDate_2.getMonth() + 6);
+      const month_2 = currentDate_2.getMonth() + 1; // Les mois vont de 0 à 11
+      const year_2 = currentDate_2.getFullYear();
+      // Format MMAAAA (avec le mois sur 2 chiffres)
+      this.TDAT = `${month_2.toString().padStart(2, '0')}${year_2}`;
    }
 
    loadTotaux() {
+
+      this.FDAT_API = this.convertirDateVersDateApi(this.FDAT);
+      this.TDAT_API = this.convertirDateVersDateApi(this.TDAT);
+
+
       console.log("test API TOTAUX");
       //(this.busyIndicator as any).activated = true;
       let inputFields: any;
@@ -103,11 +122,11 @@ export class totauxComponent extends CoreBase implements OnInit {
    getFirstDayOfMonth(period: string): string {
       const periodStr = period.toString();
       if (periodStr.length !== 6) {
-         throw new Error("Le format du period doit être AAAAMM.");
+         throw new Error("Le format du period doit être MMAAAA.");
       }
 
-      const year = periodStr.substring(0, 4);
-      const month = periodStr.substring(4, 6);
+      const year = periodStr.substring(2, 6);
+      const month = periodStr.substring(0, 2);
 
       // Retourne le premier jour du mois au format AAAAMMJJ
       return `${year}${month}01`;
@@ -116,11 +135,11 @@ export class totauxComponent extends CoreBase implements OnInit {
    getLastDayOfMonth(period: string): string {
       const periodStr = period.toString();
       if (periodStr.length !== 6) {
-         throw new Error("Le format du period doit être AAAAMM.");
+         throw new Error("Le format du period doit être MMAAAA.");
       }
 
-      const year = parseInt(periodStr.substring(0, 4), 10);
-      const month = parseInt(periodStr.substring(4, 6), 10);
+      const year = parseInt(periodStr.substring(2, 6), 10);
+      const month = parseInt(periodStr.substring(0, 2), 10);
 
       // Création d'une date pour le mois suivant, puis on recule d'un jour pour obtenir le dernier jour du mois en cours
       const lastDayDate = new Date(year, month, 0);
@@ -130,30 +149,20 @@ export class totauxComponent extends CoreBase implements OnInit {
       return `${year}${month.toString().padStart(2, "0")}${day}`;
    }
 
-   getStartPeriod(): string {
-      const currentDate = new Date();
 
-      // On calcule le mois précédent en soustrayant 5 mois
-      currentDate.setMonth(currentDate.getMonth() - 8);
 
-      const year = currentDate.getFullYear().toString();
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+   convertirDateVersDateApi(date: string): string {
+      const Str = date.padStart(6, '0'); // Ajoute un 0 au début si nécessaire
 
-      // Retourne la date au format AAAAMM
-      return `${year}${month}`;
-   }
+      if (Str.length !== 6) {
+         throw new Error("Le format de la date doit être AAAAMM (6 chiffres)");
+      }
 
-   getEndPeriod(): string {
-      const currentDate = new Date();
+      const annee = Str.substring(2, 6);
+      const mois = Str.substring(0, 2);
 
-      // On calcule le mois précédent en soustrayant 5 mois
-      currentDate.setMonth(currentDate.getMonth() + 3);
-
-      const year = currentDate.getFullYear().toString();
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-
-      // Retourne la date au format AAAAMM
-      return `${year}${month}`;
+      const dateAPI = `${annee}${mois}`;
+      return dateAPI;
    }
 
 }

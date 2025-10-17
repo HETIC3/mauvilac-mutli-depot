@@ -13,10 +13,10 @@
       <div class="three columns">
          <div class="row" style="margin-bottom: 5px; display: flex;">
             <div class="six columns">
-               <label for="TWHL">Dépôt destination</label>
+               <label for="FWHL">Dépôt départ </label>
             </div>
             <div class="six columns">
-               <select style="width: 10.25em; " soho-dropdown noSearch name="TWHL" [(ngModel)]="TWHL">
+               <select style="width: 10.25em;  " soho-dropdown noSearch name="FWHL" [(ngModel)]="FWHL">
                   <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
                </select>
             </div>
@@ -24,10 +24,10 @@
 
          <div class="row" style="margin-bottom: 5px; display: flex;">
             <div class="six columns">
-               <label for="FWHL">Dépôt départ </label>
+               <label for="TWHL">Dépôt destination</label>
             </div>
             <div class="six columns">
-               <select style="width: 10.25em;  " soho-dropdown noSearch name="FWHL" [(ngModel)]="FWHL">
+               <select style="width: 10.25em; " soho-dropdown noSearch name="TWHL" [(ngModel)]="TWHL">
                   <option *ngFor="let whlo of ListWHLO" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
                </select>
             </div>

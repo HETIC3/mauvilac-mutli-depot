@@ -1,7 +1,7 @@
 <div class="row" style="margin-top:0px;margin-left: 10px; max-width: none;">
    <div class="four columns">
       <div class="field">
-         <label for="Code article">Article</label>
+         <label for="Code article">Article : {{ITDS}}</label>
          <input class="app-inputsearch" soho-searchfield [options]="searchfieldOptionsItem" [clearable]="true"
             style="width: 600px; height:auto;" (keydown)="onKeydown($event)" placeholder="*abc" [(ngModel)]="ITNO_2"
             (selected)="onSelectedITNO($event)" (cleared)="onClear($event)" />
@@ -18,19 +18,19 @@
       <label for="Statut">Dépôt</label>
       <select style="width: 10.25em; " soho-dropdown noSearch name="WHLO_2" [(ngModel)]="selectWHLO_2">
          <option value="">Tout dépôts </option> <!-- Option vide -->
-         <option *ngFor="let whlo of ListWHLO_2" [value]="whlo.WHLO">{{whlo.WHLO}}</option>
+         <option *ngFor="let whlo of ListWHLO_2" [value]="whlo.WHLO">{{whlo.WHLO}} - {{whlo.WHNM}}</option>
       </select>
    </div>
    <div class="one columns">
       <div class="field">
          <label for="DateFrom">Date début</label>
-         <input [(ngModel)]="FDAT" placeholder="AAAAMM" maxlength="6" size="6" style="width: auto; height:38px;" />
+         <input [(ngModel)]="FDAT" placeholder="MMAAAA" maxlength="6" size="6" style="width: auto; height:38px;" />
       </div>
    </div>
    <div class="one columns">
       <div class="field">
          <label for="DateTo">Date fin</label>
-         <input [(ngModel)]="TDAT" placeholder="AAAAMM" maxlength="6" size="6" style="width: auto; height:38px;" />
+         <input [(ngModel)]="TDAT" placeholder="MMAAAA" maxlength="6" size="6" style="width: auto; height:38px;" />
       </div>
    </div>
    <div class="one columns">

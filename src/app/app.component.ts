@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CoreBase, IMIRequest, IUserContext } from '@infor-up/m3-odin';
+import { MIRecord, MIResponse } from '@infor-up/m3-odin/dist/mi/runtime';
 import { MIService, UserService } from '@infor-up/m3-odin-angular';
 import { Observable, Subscription } from 'rxjs';
 import { BasicAPIService } from './services/basicAPI.service';
@@ -46,6 +47,7 @@ export class AppComponent extends CoreBase implements OnInit {
    ITNO: string;
    ITNO_2: string;
    ITNO_new: string;
+   ITDS: string = '';
 
    //Filtre statut article
    STAT: string = '20';
@@ -201,6 +203,10 @@ export class AppComponent extends CoreBase implements OnInit {
 
 
    rechercher() {
+      let sum_V_STDP = { value: 0 };
+      let sum_MLSTQT = { value: 0 };
+      let sum_MLALQT = { value: 0 };
+
       (this.busyIndicator as any).activated = true;
       //this.cmpstockEcheance.loadStock(6);
       let inputFields: any;
@@ -250,7 +256,23 @@ export class AppComponent extends CoreBase implements OnInit {
 
             for (let i = 0; i < response.items.length; i++) {
                response.items[i].ODSAPR = parseFloat(response.items[i].ODSAPR).toFixed(3);
+               sum_V_STDP.value += parseFloat(response.items[i].V_STDP);
+               sum_MLSTQT.value += parseFloat(response.items[i].MLSTQT);
+               sum_MLALQT.value += parseFloat(response.items[i].MLALQT);
+
+               response.items[i].sum_V_STDP = sum_V_STDP;
+               response.items[i].sum_MLSTQT = sum_MLSTQT;
+               response.items[i].sum_MLALQT = sum_MLALQT;
             }
+
+            const newRecord = new MIRecord();
+            newRecord.setString('MLITNO', "Somme");
+            newRecord.setString('V_STDP', sum_V_STDP.value.toString());
+            newRecord.setString('MLSTQT', sum_MLSTQT.value.toString());
+            newRecord.setString('MLALQT', sum_MLALQT.value.toString());
+            // Ajoute le `newRecord` dans `items`
+            response.items.push(newRecord);
+
             this.basicdatagridListearticle.dataset = response.items;
             console.log(this.basicdatagridListearticle.dataset);
          }, error: (error) => {
@@ -369,7 +391,6 @@ export class AppComponent extends CoreBase implements OnInit {
       let subscription: Subscription;
       subscription = this.APIService.GetFieldValue('CMS100MI', 'LstMSH_MT_3', outputFields, inputFields, 0).subscribe({
          next: (response) => {
-            console.log("Adrien");
             let seenValues = new Set();
             response.items = response.items.filter(item => {
                const value = item.MNWHGR.trim(); // Suppression des espaces superflus
@@ -414,6 +435,7 @@ export class AppComponent extends CoreBase implements OnInit {
          next: (ITNO) => {
             ITNO.items.forEach(item => {
                this.SearchItem.push({ label: item.ITDS + ' : ' + item.ITNO, value: item.ITNO });
+
             });
             response(term, this.SearchItem);
             (this.busyIndicator as any).activated = false;
@@ -426,12 +448,17 @@ export class AppComponent extends CoreBase implements OnInit {
    onKeydown(event: any): void {
       if (event.key === 'Enter') {
          this.ITNO = event.target.value;
+         console.log("OnKeyDown" + this.ITNO);
       }
    }
 
    onSelectedITNO(event): void {
       if (event[2].value === '') return
-      this.ITNO = event[2].value;
+      this.ITNO = event[2].value + "2";
+      console.log("Adrien : " + this.ITNO);
+      this.ITNO = this.ITNO.substring(0, this.ITNO.length - 1);
+      console.log("Adrien : " + this.ITNO);
+      this.ITDS = event[2].label;
    }
 
    onClear(event: any): void {
