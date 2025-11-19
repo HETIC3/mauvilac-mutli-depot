@@ -25,6 +25,7 @@ export class multidepotComponent extends CoreBase implements OnInit {
       { id: 'ID', field: 'ID', name: '', hidden: true, sortable: false, formatter: Soho.Formatters.SelectionCheckbox },
       { id: 'MLITNO', field: 'MLITNO', name: 'Code article', width: 30, sortable: false, filterType: 'text' },
       { id: 'MMITDS', field: 'MMITDS', name: 'Nom ', width: 70, sortable: false, filterType: 'text' },
+      { id: 'MLBANO', field: 'MLBANO', name: 'Numéro de Lot', width: 40, sortable: false },
       { id: 'MMSTAT', field: 'MMSTAT', name: 'Stt', width: 10 },
       { id: 'MMSALE', field: 'MMSALE', name: 'Vente', width: 20 },
       { id: 'MLWHLO', field: 'MLWHLO', name: 'Dépôt', width: 40, sortable: false },
@@ -32,7 +33,7 @@ export class multidepotComponent extends CoreBase implements OnInit {
       { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
       { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 40, sortable: false },
       { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 40, sortable: false },
-      { id: 'MTRIDN', field: 'MTRIDN', name: 'Ordre Référence', width: 40, sortable: false },
+
 
 
    ];

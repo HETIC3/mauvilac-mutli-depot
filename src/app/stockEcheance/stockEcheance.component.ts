@@ -83,7 +83,6 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    ArrayDataZoom: any[] = []
    firstMonthRecepQty: number = 0;
 
-   numPeriods: number;
 
 
 
@@ -132,10 +131,8 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       super('stockEcheance');
    }
 
-   ngOnInit(): void {
-      this.logWarning('chargement Panel StockEchanécé');
-      this.numPeriods = 12;
-
+   async ngOnInit() {
+      this.logWarning('chargement Panel Stock Echéancé');
       this.logInfo('onClickLoad');
       this.setBusy(true);
       this.userService.getUserContext().subscribe((userContext: IUserContext) => {
@@ -143,8 +140,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          this.logInfo('onClickLoad: Received user context');
          this.userContext = userContext;
          this.USID = this.userContext.USID;
-         console.log(this.userContext);
-         this.USERWHLO = this.userContext.WHLO
+         console.log("Adrien ") + this.USERWHLO;
          this.getListWHLO();
 
       }, (error) => {
@@ -152,6 +148,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
          this.logError('Unable to get userContext ' + error);
       });
       this.getListWHSL();
+
 
 
       const currentDate = new Date();
@@ -299,9 +296,15 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let year = startYear;
       let month = startMonth;
 
+      if (this.ITNO_2.includes(":")) {
+         this.ITNO_2 = this.ITNO_2.replace(/^.*?:\s*/, ''); // supprimer le début de la chaine jusqu'au : et les espaces blancs
+      }
+
       // Créer un objet dynamique pour le forkJoin
       let requests = {};
       let i = 0;
+
+
 
       while (currentYear < endYear || (currentYear === endYear && currentMonth <= endMonth)) {
          //console.log("LECTURE DE BOUCLE currentYear ==> " + currentYear + " EndYear ==> " + endYear + " CurrentMonth => " + currentMonth + " EndMOnth ===> " + endMonth)
@@ -461,6 +464,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
                } else {
                   for (let i = 0; i < response.items.length; i++) {
                      if (response.items[i].ITNO != 'Total') {
+                        response.items[i].Periode = month.value; // Effet de bord
                         continue;
                      }
                      response.items[i].Periode = month.value;
@@ -593,7 +597,6 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       let periodeZoom = e.item.AnneeMois;
       const index = this.ArrayDataZoom.findIndex(row => row[0].PERI === periodeZoom);
       datasetToPass = this.ArrayDataZoom[index];
-      console.log(datasetToPass);
       // datasetToPass.pop(); // Supprime le dernier élément
 
       const dialogRef = this.modalService
@@ -629,7 +632,8 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       subscription = this.APIService.GetFieldValue('MMS005MI', 'LstWarehouses', outputFields, inputFields, 0).subscribe({
          next: (response) => {
             this.ListWHLO_2 = response.items;
-            this.selectWHLO_2 = this.USERWHLO;
+            this.selectWHLO_2 = this.userContext.WHLO;
+
          }, error: (error) => {
             (this.busyIndicator as any).activated = false;
             this.logError('Failed to load items :' + JSON.stringify(error));
@@ -778,6 +782,11 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    }
 
    onClear(event: any): void {
+      this.ITNO_2 = '';
+
+   }
+
+   onC(event: any): void {
       this.ITNO_2 = '';
 
    }

@@ -24,8 +24,8 @@ export class ModalDialogAllColumnComponent implements OnInit {
       { id: 'CONS', field: 'CONS', name: 'Consommation', width: 30, sortable: false, filterType: 'text' },
       { id: 'REGU', field: 'REGU', name: 'Régul', width: 30, sortable: false, filterType: 'text' },
       { id: 'CMDE', field: 'CMDE', name: 'Commande', width: 30, sortable: false, filterType: 'text' },
+      { id: 'RESE', field: 'RESE', name: 'Réservation', width: 30, sortable: false, filterType: 'text' },
       { id: 'DADF', field: 'DADF', name: 'DA/DF', width: 30, sortable: false, filterType: 'text' },
-
       { id: 'PERI', field: 'PERI', name: 'PERI', hidden: true, width: 30, sortable: false, filterType: 'text' },
       { id: 'ID', field: 'ID', name: '', hidden: true, sortable: false, formatter: Soho.Formatters.SelectionCheckbox },
       { id: 'AnneeMois', field: 'AnneeMois', hidden: true, name: 'AnneeMois', width: 40, sortable: false },

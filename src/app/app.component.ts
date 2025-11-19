@@ -121,9 +121,9 @@ export class AppComponent extends CoreBase implements OnInit {
       { id: 'MMSALE', field: 'MMSALE', name: 'Vente', width: 20 },
       { id: 'MLWHLO', field: 'MLWHLO', name: 'Dépôt', width: 40, sortable: false },
       { id: 'MLWHSL', field: 'MLWHSL', name: 'Emplacement', width: 40, sortable: false },
-      { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
-      { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 40, sortable: false },
-      { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 40, sortable: false },
+      { id: 'total_V_STDP', field: 'total_V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
+      { id: 'total_MLSTQT', field: 'total_MLSTQT', name: 'Stock physique', width: 40, sortable: false },
+      { id: 'total_MLALQT', field: 'total_MLALQT', name: 'Stock Reservé', width: 40, sortable: false },
       { id: 'ODSAPR', field: 'ODSAPR', name: 'Tarif vente', width: 40, sortable: false },
       { id: 'MNWHGR', field: 'MNWHGR', hidden: true, name: 'Groupe Dépôt', width: 50, sortable: false },
       { id: 'MWFACI', field: 'MWFACI', hidden: true, name: 'Etablissement', width: 50, sortable: false },
@@ -207,6 +207,12 @@ export class AppComponent extends CoreBase implements OnInit {
       let sum_MLSTQT = { value: 0 };
       let sum_MLALQT = { value: 0 };
 
+
+      if (this.ITNO.includes(":")) {
+
+         this.ITNO = this.ITNO.replace(/^.*?:\s*/, ''); // supprimer le début de la chaine jusqu'au : et les espaces blancs
+      }
+
       (this.busyIndicator as any).activated = true;
       //this.cmpstockEcheance.loadStock(6);
       let inputFields: any;
@@ -254,27 +260,88 @@ export class AppComponent extends CoreBase implements OnInit {
                }
             }
 
+            // --------------------------------------------- //
+            // 2) Regroupement par MLITNO + MLWHLO           //
+            // --------------------------------------------- //
+            const toNum = (x: any) => Number((x ?? "0").toString().replace(",", "."));
+
+            const grouped = Object.values(
+               response.items.reduce((acc: any, item: any) => {
+
+                  const key = `${item.MLITNO}-${item.MLWHLO}`;
+
+                  if (!acc[key]) {
+                     acc[key] = {
+                        MLITNO: item.MLITNO,
+                        MLWHLO: item.MLWHLO,
+                        MMITDS: item.MMITDS,
+                        MMSTAT: item.MMSTAT,
+                        MMSALE: item.MMSALE,
+                        MLWHSL: item.MLWHSL,
+                        total_MLSTQT: 0,
+                        total_MLALQT: 0,
+                        total_V_STDP: 0,
+                        ODSAPR: item.ODSAPR,
+                        BANO_list: [],
+                        original: item
+                     };
+                  }
+
+                  acc[key].total_MLSTQT += toNum(item.MLSTQT);
+                  acc[key].total_MLALQT += toNum(item.MLALQT);
+                  acc[key].total_V_STDP += toNum(item.V_STDP);
+                  //acc[key].MMITDS += toNum(item.original.MMITDS);
+
+                  acc[key].BANO_list.push(item.MLBANO);
+
+                  return acc;
+               }, {})
+            );
+
+            // Remplace les items par les regroupements
+            response.items = grouped;
+
+            // ---------------------------------------------------- //
+            // 3) Sommes globales sans NaN                         //
+            // ---------------------------------------------------- //
+            let sum_V_STDP: any = { value: 0 };
+            let sum_MLSTQT: any = { value: 0 };
+            let sum_MLALQT: any = { value: 0 };
+
             for (let i = 0; i < response.items.length; i++) {
-               response.items[i].ODSAPR = parseFloat(response.items[i].ODSAPR).toFixed(3);
-               sum_V_STDP.value += parseFloat(response.items[i].V_STDP);
-               sum_MLSTQT.value += parseFloat(response.items[i].MLSTQT);
-               sum_MLALQT.value += parseFloat(response.items[i].MLALQT);
+
+               // ODSAPR peut être string → normalisation
+               if (response.items[i].ODSAPR)
+                  response.items[i].ODSAPR = Number(response.items[i].ODSAPR).toFixed(3);
+
+               sum_V_STDP.value += response.items[i].total_V_STDP;
+               sum_MLSTQT.value += response.items[i].total_MLSTQT;
+               sum_MLALQT.value += response.items[i].total_MLALQT;
 
                response.items[i].sum_V_STDP = sum_V_STDP;
                response.items[i].sum_MLSTQT = sum_MLSTQT;
                response.items[i].sum_MLALQT = sum_MLALQT;
             }
 
+
+            // ---------------------------------------------------- //
+            // 4) Ajout du total final                              //
+            // ---------------------------------------------------- //
             const newRecord = new MIRecord();
             newRecord.setString('MLITNO', "Somme");
-            newRecord.setString('V_STDP', sum_V_STDP.value.toString());
-            newRecord.setString('MLSTQT', sum_MLSTQT.value.toString());
-            newRecord.setString('MLALQT', sum_MLALQT.value.toString());
-            // Ajoute le `newRecord` dans `items`
+            newRecord.setString('total_V_STDP', sum_V_STDP.value.toString());
+            newRecord.setString('total_MLSTQT', sum_MLSTQT.value.toString());
+            newRecord.setString('total_MLALQT', sum_MLALQT.value.toString());
+
             response.items.push(newRecord);
 
+
+            // ---------------------------------------------------- //
+            // 5) Envoi au datagrid                                 //
+            // ---------------------------------------------------- //
             this.basicdatagridListearticle.dataset = response.items;
             console.log(this.basicdatagridListearticle.dataset);
+
          }, error: (error) => {
             (this.busyIndicator as any).activated = false;
             this.logError('Failed to load items :' + JSON.stringify(error));
@@ -324,7 +391,7 @@ export class AppComponent extends CoreBase implements OnInit {
       subscription = this.APIService.GetFieldValue('MMS005MI', 'LstWarehouses', outputFields, inputFields, 0).subscribe({
          next: (response) => {
             this.ListWHLO = response.items;
-            this.ListWHLO_2 = response.items;
+            //this.ListWHLO_2 = response.items;
             this.selectWHLO = this.userContext.WHLO;
          }, error: (error) => {
             (this.busyIndicator as any).activated = false;

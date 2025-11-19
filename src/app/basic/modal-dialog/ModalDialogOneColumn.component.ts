@@ -21,6 +21,7 @@ export class ModalDialogOneColumnComponent implements OnInit {
       { id: 'YP40', field: 'YP40', name: 'Libelle Transaction', width: 30, sortable: false, filterType: 'text' },
       { id: 'WHLO', field: 'WHLO', name: 'Dépôt', width: 30, sortable: false, filterType: 'text' },
       { id: 'RIDN', field: 'RIDN', name: 'Ordre réf', width: 30, sortable: false, filterType: 'text' },
+      { id: 'CUNM', field: 'CUNM', name: 'Nom', width: 30, sortable: false, filterType: 'text' },
       { id: 'FIELD', field: 'FIELD', name: 'Qte', width: 30, sortable: false, filterType: 'text' },
    ];
 

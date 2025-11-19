@@ -10,7 +10,6 @@
    <div class="one columns">
       <label for="Groupe dépôt">Emplacement</label>
       <select style="width: 10.25em; " soho-dropdown noSearch name="WHSL" [(ngModel)]="selectWHSL">
-         <option value=""></option> <!-- Option vide -->
          <option *ngFor="let whsl of ListWHSL" [value]="whsl.WHSL">{{whsl.SLDS}}</option>
       </select>
    </div>
