@@ -159,7 +159,7 @@ export class AppComponent extends CoreBase implements OnInit {
    }
 
    async ngOnInit() {
-      this.logWarning('chargement Mashup article 360');
+      this.logWarning('chargement mashup multi depot');
       this.logInfo('onClickLoad');
       this.setBusy(true);
       this.userService.getUserContext().subscribe((userContext: IUserContext) => {
@@ -268,7 +268,7 @@ export class AppComponent extends CoreBase implements OnInit {
             const grouped = Object.values(
                response.items.reduce((acc: any, item: any) => {
 
-                  const key = `${item.MLITNO}-${item.MLWHLO}`;
+                  const key = `${item.MLITNO}-${item.MLWHLO}-${item.MLWHSL}`;
 
                   if (!acc[key]) {
                      acc[key] = {

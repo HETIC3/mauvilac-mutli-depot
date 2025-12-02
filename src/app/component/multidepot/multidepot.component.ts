@@ -16,6 +16,7 @@ export class multidepotComponent extends CoreBase implements OnInit {
    @ViewChild('basicdatagridListearticleMultiDepot') basicdatagridListearticleMultiDepot: BasicGridComponent;
 
    @Input() ITNOSelected: string;
+   @Input() WHLOSelected: string;
 
    dataselect: Object[] = [];
    lineSelected: any = '';
@@ -33,6 +34,8 @@ export class multidepotComponent extends CoreBase implements OnInit {
       { id: 'V_STDP', field: 'V_STDP', name: 'Stock Dispo', width: 40, sortable: false },
       { id: 'MLSTQT', field: 'MLSTQT', name: 'Stock physique', width: 40, sortable: false },
       { id: 'MLALQT', field: 'MLALQT', name: 'Stock Reservé', width: 40, sortable: false },
+      { id: 'AGATVA', field: 'AGATVA', name: 'Val. Attribut', width: 40, sortable: false },
+      { id: 'AGATID', field: 'AGATID', name: 'Id Attribut', width: 40, sortable: false },
 
 
 
@@ -79,6 +82,9 @@ export class multidepotComponent extends CoreBase implements OnInit {
          MLITNO: this.ITNOSelected,
          F_ITNO: this.ITNOSelected,
          T_ITNO: this.ITNOSelected,
+         MLWHLO: this.WHLOSelected,
+         F_WHLO: this.WHLOSelected,
+         T_WHLO: this.WHLOSelected,
 
       };
       inputFields = newrecord;

@@ -2,19 +2,19 @@
    "projectName": "multi-depot",
    "proxy": {
       "/m3api-rest": {
-         "target": "https://apprunm3prd.oceinde.com:31008",
+         "target": "https://apprunm3tst.oceinde.com:32008/",
          "secure": false,
          "changeOrigin": true,
          "logLevel": "debug"
       },
       "/mne": {
-         "target": "https://apprunm3prd.oceinde.com:31008",
+         "target": "https://apprunm3tst.oceinde.com:32008/",
          "secure": false,
          "changeOrigin": true,
          "logLevel": "debug"
       },
       "/ca": {
-         "target": "https://apprunm3prd.oceinde.com:31008",
+         "target": "https://apprunm3tst.oceinde.com:32008/",
          "secure": false,
          "changeOrigin": true,
          "logLevel": "debug"
