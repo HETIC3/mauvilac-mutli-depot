@@ -7,7 +7,8 @@
    <div soho-busyindicator [activated]="isBusy" [blockUI]="true" [displayDelay]="0">
       <div class="six columns">
          <app-basicgrid #basicdatagridListePOD [program]="'CMS100MI'" [transaction]="'LstMSH_MT_6'"
-            [optionsDataGrid]="optionsDataGridListePod" [initialise]="false">
+            [optionsDataGrid]="optionsDataGridListePod" [initialise]="false"
+            (sendDataClick)="onevent($event,'sendDataClick')">
          </app-basicgrid>
       </div>
       <div class="three columns">

@@ -2,7 +2,7 @@
    "projectName": "multi-depot",
    "proxy": {
       "/m3api-rest": {
-         "target": "https://apprunm3tst.oceinde.com:32008/",
+         "target": "https://192.168.10.161:32008/",
          "secure": false,
          "changeOrigin": true,
          "logLevel": "debug"

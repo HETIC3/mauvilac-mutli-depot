@@ -11,6 +11,7 @@ import { ModalDialogAllColumnComponent } from 'src/app/basic/modal-dialog/ModalD
 import { UserService } from '@infor-up/m3-odin-angular';
 import { poaComponent } from '../component/POA/poa.component';
 import { pofComponent } from '../component/POF/pof.component';
+import { podComponent } from '../component/POD/pod.component';
 
 
 
@@ -29,6 +30,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
    @ViewChild('cmpMMS080') cmpMMS080: MMS80component;
    @ViewChild('cmppoa') cmppoa: poaComponent;
    @ViewChild('cmppof') cmppof: pofComponent;
+   @ViewChild('cmppod') cmppod: podComponent;
    @ViewChild('dialogOneColumn', { read: ViewContainerRef, static: true })
    placeholderOneColumn?: ViewContainerRef;
    @ViewChild('dialogAllColumn', { read: ViewContainerRef, static: true })
@@ -273,6 +275,14 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       if (this.ITNO_2 == '') {
          alert("Le champ article  doit être renseigné");
          return;
+      }
+
+      if (this.cmppod && typeof this.cmppod.unloadPOD === 'function') {
+         this.cmppod.unloadPOD();
+      }
+
+      if (this.cmppod && typeof this.cmppod.getListPOD === 'function') {
+         this.cmppod.getListPOD();
       }
 
       this.FDAT_API = this.convertirDateVersDateApi(this.FDAT);

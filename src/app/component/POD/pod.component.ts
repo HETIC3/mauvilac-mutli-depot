@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { CoreBase } from '@infor-up/m3-odin';
+import { CoreBase, IBookmark } from '@infor-up/m3-odin';
 import { SohoBusyIndicatorDirective } from 'ids-enterprise-ng';
 import { ApplicationService } from '@infor-up/m3-odin-angular';
 import { Subscription } from 'rxjs';
 import { BasicGridComponent } from 'src/app/basic/grid/basicgrid.component';
 import { BasicAPIService } from 'src/app/services/basicAPI.service';
+import { Bookmark } from '@infor-up/m3-odin/dist/form/base';
 
 
 @Component({
@@ -33,6 +34,15 @@ export class podComponent extends CoreBase implements OnInit {
    DLDT: string;
    PPQT: string;
 
+   //Champ de la liste selectionnée
+   from_WHLO_list: string;
+   to_WHLO_list: string;
+   ITNO_list: string;
+   DLDT_list: string;
+   PLPN_list: string;
+   GETY_list: string;
+
+
    dataselect: Object[] = [];
    lineSelected: any = '';
    isBusy = false;
@@ -47,6 +57,7 @@ export class podComponent extends CoreBase implements OnInit {
       { id: 'DOFWHL', field: 'DOFWHL', name: 'Dépôt départ', width: 20 },
       { id: 'DODLDT', field: 'DODLDT', name: 'Date planif', width: 20 },
       { id: 'DOPPQT', field: 'DOPPQT', name: 'Qte planif', width: 10 },
+      { id: 'DOGETY', field: 'DOGETY', hidden: true, name: 'ref', width: 10 },
 
    ];
 
@@ -189,10 +200,38 @@ export class podComponent extends CoreBase implements OnInit {
    }
 
    UpdatePOD() {
+      // if (this.ITNOSelected !== '') {
+      //    let query: string = 'mforms://_automation?data=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%3csequence%3e%3cstep+command%3d%22RUN%22+value%3d%22DPS170%22+%2f%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22WWQTTP%22%3e70%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22W1OBKV%22%3e'
+      //       + this.ITNOSelected + '%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22KEY%22+value%3d%22ENTER%22+%2f%3e%3c%2fsequence%3e';
+      //    this.applicationService.launch(query);
+      // }
       if (this.ITNOSelected !== '') {
-         let query: string = 'mforms://_automation?data=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%3csequence%3e%3cstep+command%3d%22RUN%22+value%3d%22DPS170%22+%2f%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22WWQTTP%22%3e70%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22W1OBKV%22%3e'
-            + this.ITNOSelected + '%3c%2ffield%3e%3c%2fstep%3e%3cstep+command%3d%22KEY%22+value%3d%22ENTER%22+%2f%3e%3c%2fsequence%3e';
-         this.applicationService.launch(query);
+         let bookmark: IBookmark = {
+            program: "DPS170",
+            table: "MDOPLP",
+            keyNames: "DOCONO,DOPLPN,DOPLPS",
+            fieldNames: "W1OBKV,W2OBKV,W3OBKV,W4OBKV,W5OBKV,W6OBKV",
+            sortingOrder: "70",
+            panel: "B",
+
+         };
+
+         bookmark.values = {
+            DOCONO: '200',
+            W1OBKV: this.from_WHLO_list,
+            W2OBKV: this.to_WHLO_list,
+            W3OBKV: this.GETY_list,
+            W4OBKV: this.DLDT_list,
+            W5OBKV: this.ITNO_list,
+            W6OBKV: this.PLPN_list
+
+
+         };
+
+
+         let url: string = Bookmark.toUri(bookmark);
+         this.applicationService.launch(url);
+         console.log(url);
       }
    }
 
@@ -234,6 +273,34 @@ export class podComponent extends CoreBase implements OnInit {
 
       subscription = this.APIService.GetFieldValue('CMS100MI', 'LstMSH_MT_6', outputFields, inputFields, 0).subscribe({
          next: (response) => {
+            // Ne garder que les articles avec le même dépôt de destination
+            response.items = response.items.filter(item => item.DOTWHL === this.WHLOSelected);
+            console.log(this.WHLOSelected);
+            // Format DODLDT de AAAAMMJJ à JJMMAAAA
+            response.items = response.items.map(item => {
+               if (item.DODLDT && /^\d{8}$/.test(item.DODLDT)) {
+                  const yyyy = item.DODLDT.substr(0, 4);
+                  const mm = item.DODLDT.substr(4, 2);
+                  const dd = item.DODLDT.substr(6, 2);
+                  item.DODLDT = `${dd}${mm}${yyyy}`;
+               }
+               return item;
+            });
+
+            // Tri chronologique sur DODLDT (JJMMAAAA)
+            response.items.sort((a, b) => {
+               const toIso = (d: string) => {
+                  if (!d || d.length !== 8) {
+                     return '';
+                  }
+                  const jour = d.substr(0, 2);
+                  const mois = d.substr(2, 2);
+                  const an = d.substr(4, 4);
+                  return `${an}-${mois}-${jour}`;
+               };
+               return toIso(a.DODLDT).localeCompare(toIso(b.DODLDT));
+            });
+
             this.basicdatagridListePOD.datagrid.dataset = response.items;
          }, error: (error) => {
             (this.busyIndicator as any).activated = false;
@@ -244,6 +311,45 @@ export class podComponent extends CoreBase implements OnInit {
             (this.busyIndicator as any).activated = false;
          }
       });
+   }
+
+   onevent(e: any, TypeEvent: string) {
+      this.logDebug('Event :' + TypeEvent + ' - ' + JSON.stringify(e));
+      if (TypeEvent === 'sendDataClick') {
+         console.log('click sur datagrid POD');
+         console.log(e);
+         this.lineSelected = e;
+         this.dataselect = [];
+         this.dataselect.push(e);
+         // Convertit DODLDT AAAAMMJJ ou JJMMAAAA en JJMMAA
+         const rawDate = e.item.DODLDT || '';
+         if (/^\d{8}$/.test(rawDate)) {
+            const jour = rawDate.substr(0, 2);
+            const mois = rawDate.substr(2, 2);
+            const annee2 = rawDate.substr(6, 2);
+            this.DLDT_list = `${jour}${mois}${annee2}`;
+         } else if (/^\d{6}$/.test(rawDate)) {
+            this.DLDT_list = rawDate;
+         } else {
+            this.DLDT_list = rawDate;
+         }
+         this.ITNO_list = e.item.DOITNO;
+         this.from_WHLO_list = e.item.DOFWHL;
+         this.to_WHLO_list = e.item.DOTWHL;
+         this.PLPN_list = e.item.DOPLPN;
+         this.GETY_list = e.item.DOGETY;
+
+         console.log(this.DLDT_list);
+         console.log(this.ITNO_list);
+         console.log(this.from_WHLO_list);
+         console.log(this.to_WHLO_list);
+      }
+
+   }
+
+   unloadPOD() {
+      console.log("unloadPOD");
+      this.basicdatagridListePOD.datagrid.dataset = [];
    }
 
 
