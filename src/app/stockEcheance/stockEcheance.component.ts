@@ -334,7 +334,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       }
 
       forkJoin(requests).subscribe({
-         next: (response) => { // a enlever quand IES OK
+         next: (response) => {
             this.fillDatagrid();
             // console.log("Zoom");
             //console.log(this.ArrayDataZoom);
@@ -769,7 +769,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
       subscription = this.APIService.GetFieldValue('MMS200MI', 'SearchItem', outputFields, inputFields, 100).subscribe({
          next: (ITNO) => {
             ITNO.items.forEach(item => {
-               this.SearchItem.push({ label: item.ITDS + ' : ' + item.ITNO, value: item.ITNO });
+               this.SearchItem.push({ label: item.FUDS + ' : ' + item.ITNO, value: item.ITNO });
             });
             response(term, this.SearchItem);
             (this.busyIndicator as any).activated = false;
@@ -796,10 +796,7 @@ export class stockEcheanceComponent extends CoreBase implements OnInit {
 
    }
 
-   onC(event: any): void {
-      this.ITNO_2 = '';
 
-   }
 
 
 }

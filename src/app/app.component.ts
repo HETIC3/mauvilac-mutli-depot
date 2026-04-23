@@ -491,7 +491,7 @@ export class AppComponent extends CoreBase implements OnInit {
       let reponse: any[];
 
       let newrecord = {
-         SQRY: "SearchFields:ITNO;ITDS (" + term + "*) NOT ITTY:7FA",
+         SQRY: "SearchFields:ITNO;ITDS;FUDS (" + term + "*) NOT ITTY:7FA",
          //SQRY: "((ITNO: (" + term + "*)) OR (FUDS: (" + term + "*))) NOT ITTY:7FA",
          //SQRY: "SearchFields:ITNO;FUDS;ITDS: BLANC*"
       };
@@ -501,7 +501,7 @@ export class AppComponent extends CoreBase implements OnInit {
 
          next: (ITNO) => {
             ITNO.items.forEach(item => {
-               this.SearchItem.push({ label: item.ITDS + ' : ' + item.ITNO, value: item.ITNO });
+               this.SearchItem.push({ label: item.FUDS + ' : ' + item.ITNO, value: item.ITNO });
 
             });
             response(term, this.SearchItem);

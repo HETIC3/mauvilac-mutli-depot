@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { CoreBase, IBookmark } from '@infor-up/m3-odin';
+import { CoreBase, IBookmark, IUserContext } from '@infor-up/m3-odin';
 import { SohoBusyIndicatorDirective } from 'ids-enterprise-ng';
-import { ApplicationService } from '@infor-up/m3-odin-angular';
+import { ApplicationService, UserService } from '@infor-up/m3-odin-angular';
 import { Subscription } from 'rxjs';
 import { BasicGridComponent } from 'src/app/basic/grid/basicgrid.component';
 import { BasicAPIService } from 'src/app/services/basicAPI.service';
@@ -21,6 +21,8 @@ export class podComponent extends CoreBase implements OnInit {
    @Input() WHLOSelected: string;
    @Input() USID: string;
 
+   userContext = {} as IUserContext;
+
    //Filtre Dépôt
    ListWHLO: any[] = [];
    FWHL: string;
@@ -29,6 +31,9 @@ export class podComponent extends CoreBase implements OnInit {
    //Filtre type d'Ordre
    ListORTY: any[] = [];
    ORTY: string;
+
+   //Tableau des autorisations de l'utilisateur
+   ListORTY_autorisations: any[] = [];
 
 
    DLDT: string;
@@ -87,7 +92,7 @@ export class podComponent extends CoreBase implements OnInit {
 
 
 
-   constructor(private APIService: BasicAPIService, private applicationService: ApplicationService) {
+   constructor(private APIService: BasicAPIService, private applicationService: ApplicationService, private userService: UserService) {
       super('pod');
    }
 
@@ -95,6 +100,16 @@ export class podComponent extends CoreBase implements OnInit {
       this.logWarning('chargement Panel POD');
       this.getListWHLO();
       this.getListORTY();
+      this.userService.getUserContext().subscribe((userContext: IUserContext) => {
+
+         this.logInfo('onClickLoad: Received user context');
+         this.userContext = userContext;
+         this.USID = this.userContext.USID;
+         console.log(this.userContext);
+         this.getAutorization();
+      }, (error) => {
+         this.logError('Unable to get userContext ' + error);
+      });
    }
 
    getListWHLO() {
@@ -153,6 +168,35 @@ export class podComponent extends CoreBase implements OnInit {
       });
    }
 
+   getAutorization() {
+      this.ListORTY_autorisations = [];
+      (this.busyIndicator as any).activated = true;
+      let inputFields: any;
+      let outputFields: any[] = [];
+      let reponse: any[];
+
+      let newrecord = {
+         ATAURE: this.USID,
+      };
+
+      inputFields = newrecord;
+      let subscription: Subscription;
+      subscription = this.APIService.GetFieldValue('CMS100MI', 'LstMSH_MT_7', outputFields, inputFields, 0).subscribe({
+         next: (response) => {
+            this.ListORTY_autorisations = response.items;
+            console.log('Autorisation de l\'utilisateur :');
+            console.log(this.ListORTY_autorisations);
+         }, error: (error) => {
+            (this.busyIndicator as any).activated = false;
+            this.logError('Failed to load items :' + JSON.stringify(error));
+            subscription.unsubscribe();
+         }, complete: () => {
+            subscription.unsubscribe();
+            (this.busyIndicator as any).activated = false;
+         }
+      });
+   }
+
    createPOD() {
       if (this.TWHL == '') {
          alert("Dépôt de destination obligatiore");
@@ -182,6 +226,13 @@ export class podComponent extends CoreBase implements OnInit {
       if (isNaN(Number(this.PPQT)) || this.PPQT == '') {
          alert("La quantité est obligatoire");
          return
+      }
+
+      if (!this.checkAutorization(this.ORTY)) {
+         alert("Vous n'avez pas l'autorisation de créer ce POD");
+         return;
+      } else {
+         console.log("L'utilisateur a l'autorisation de créer ce POD");
       }
 
       let query: string = 'mforms://_automation?data=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%3csequence%3e%3cstep+command%3d%22RUN%22+value%3d%22DPS170%22+%2f%3e%3cstep+command%3d%22KEY%22+value%3d%22F17%22+%2f%3e%3cstep+command%3d%22AUTOSET%22%3e%3cfield+name%3d%22W1TWHL%22%3e'
@@ -350,6 +401,31 @@ export class podComponent extends CoreBase implements OnInit {
    unloadPOD() {
       console.log("unloadPOD");
       this.basicdatagridListePOD.datagrid.dataset = [];
+   }
+
+   checkAutorization(ORTY: string): boolean {
+      console.log('Vérification autorisation pour le type d\'ordre : ' + ORTY);
+      if (!ORTY) return false;
+      for (let auth of this.ListORTY_autorisations) {
+         let attrts = [auth.ATTRT1, auth.ATTRT2, auth.ATTRT3, auth.ATTRT4, auth.ATTRT5, auth.ATTRT6, auth.ATTRT7, auth.ATTRT8].filter(a => a && a.trim());
+         if (auth.ATIOEX == 1) {
+            if (attrts.includes(ORTY)) {
+               return true;
+            } else {
+               return false;
+            }
+         }
+         if (auth.ATIOEX == 2) {
+            if (attrts.includes(ORTY)) {
+               return false;
+            } else {
+               return true;
+            }
+         }
+      }
+      // Si aucune règle ne correspond, on considère que l'utilisateur a  l'autorisation
+      return true;
+
    }
 
 
